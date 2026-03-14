@@ -1,18 +1,38 @@
+'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, SlidersHorizontal, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
-export default function PromptCard({ item, onOpenMixer }) {
+interface PromptItem {
+  id: number;
+  collection: string;
+  prompt: string;
+  originalPrompt?: string;
+  template?: string;
+  defaults?: string;
+  explanation?: string;
+  imageUrl?: string;
+  localPath?: string;
+  isRefined: boolean | number;
+}
+
+interface PromptCardProps {
+  item: PromptItem;
+  onOpenMixer: (item: PromptItem) => void;
+}
+
+export default function PromptCard({ item, onOpenMixer }: PromptCardProps) {
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const isRefined = item.isRefined === true || (item.isRefined as unknown as number) === 1;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(item.originalPrompt || item.prompt);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const isRefined = item.isRefined === 1;
 
   return (
     <motion.div
@@ -25,12 +45,19 @@ export default function PromptCard({ item, onOpenMixer }) {
     >
       {/* Görsel Alanı */}
       <div className="relative aspect-auto min-h-[200px] cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
-        <img
-          src={item.localPath || item.imageUrl} 
-          alt=""
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
+        {(item.localPath || item.imageUrl) && !imgError ? (
+          <img
+            src={item.localPath || item.imageUrl} 
+            alt={item.collection}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-48 bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center">
+            <Sparkles className="text-neutral-600" size={40} />
+          </div>
+        )}
         
         {/* Karartma Gradien */}
         <div className={`absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent transition-opacity duration-300 ${isExpanded ? 'opacity-90' : 'opacity-0 group-hover:opacity-100'}`} />

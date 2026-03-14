@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { ToastProvider } from "@/components/Toast";
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
@@ -30,7 +31,9 @@ export default function RootLayout({
     <html lang="tr">
       <body className="antialiased">
         <Providers>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </Providers>
       </body>
     </html>

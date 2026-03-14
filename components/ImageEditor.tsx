@@ -11,7 +11,8 @@ import dynamic from 'next/dynamic';
 import { SCX_VAULT } from '@/lib/scx-vault';
 
 // CanvasDraw SSR hatasını engellemek için dinamik yükleme
-const CanvasDraw = dynamic(() => import('react-canvas-draw'), { ssr: false });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CanvasDraw = dynamic(() => import('react-canvas-draw'), { ssr: false }) as any;
 
 /**
  * ImageEditor: SCX Studio'nun "Diyafram" mekanizmalı ana düzenleme motoru.

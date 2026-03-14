@@ -7,6 +7,8 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ─── NextAuth Modelleri ──────────────────────────────────────────────────────
+
 model Account {
   id                 String  @id @default(cuid())
   userId             String
@@ -20,8 +22,7 @@ model Account {
   scope              String?
   id_token           String?
   session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -35,13 +36,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id              String           @id @default(cuid())
+  name            String?
+  email           String?          @unique
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
+  characters      CharacterDNA[]
+  generatedImages GeneratedImage[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 model VerificationToken {
@@ -50,4 +55,58 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// ─── SCX Studio Modelleri ────────────────────────────────────────────────────
+
+model CharacterDNA {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String?  @default("Ana Karakter")
+  isMainCharacter Boolean  @default(false)
+  age             String?
+  gender          String?  @default("unspecified")
+  skinTone        String?
+  bodyType        String?
+  hairStyle       String?
+  facialFeatures  String?
+  faceImages      String?
+  poseReference   String?
+  signatureOutfit String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model GeneratedImage {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  promptUsed    String
+  imageUrl      String
+  engineUsed    String   @default("fal_ai_flux_pulid")
+  mixerSettings String?
+  isFavorite    Boolean  @default(false)
+  tags          String?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+}
+
+model PromptTemplate {
+  id             Int      @id @default(autoincrement())
+  collection     String
+  originalPrompt String
+  template       String
+  defaults       String?
+  explanation    String?
+  imageUrl       String?
+  localPath      String?
+  isRefined      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([collection])
 }

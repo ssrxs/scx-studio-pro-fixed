@@ -2,16 +2,20 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Upload, Sparkles, LogIn, Loader2, X, Wand2, UserCircle } from 'lucide-react';
+import { Search, Upload, Sparkles, LogIn, Loader2, X, Wand2, UserCircle, Download, Clapperboard } from 'lucide-react';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import PromptCard from '@/components/PromptCard';
 import ImageEditor from '@/components/ImageEditor';
 import { useMixerStore } from '@/lib/store';
+import { useToast } from '@/components/Toast';
+import { SkeletonGrid } from '@/components/LoadingSkeleton';
 
 export default function Home() {
   const { data: session, status } = useSession();
-  const [prompts, setPrompts] = useState([]);
+  const { showToast } = useToast();
+  const [prompts, setPrompts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -51,10 +55,12 @@ export default function Home() {
     if (loading || !hasMore) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/prompts?page=${page}&limit=20&q=${search}`);
+      setFetchError(false);
+      const res = await fetch(`/api/prompts?page=${page}&limit=20&q=${encodeURIComponent(search)}`);
+      if (!res.ok) throw new Error('API hatası');
       const data = await res.json();
       
-      if (data.items.length === 0) {
+      if (!data.items || data.items.length === 0) {
         setHasMore(false);
       } else {
         setPrompts(prev => page === 1 ? data.items : [...prev, ...data.items]);
@@ -62,6 +68,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Fetch error:", error);
+      setFetchError(true);
+      showToast('Promptlar yüklenirken hata oluştu. Lütfen tekrar deneyin.', 'error');
     }
     setLoading(false);
   };
@@ -83,7 +91,7 @@ export default function Home() {
 
   const handleGenerate = async () => {
     if (!session?.user) {
-      alert("Üretim yapmak için lütfen önce giriş yapın.");
+      showToast('Üretim yapmak için lütfen önce giriş yapın.', 'error');
       return;
     }
     
@@ -112,13 +120,14 @@ export default function Home() {
       const data = await res.json();
       
       if (!res.ok) {
-        alert(data.error || "Üretim sırasında bir hata oluştu.");
+        showToast(data.error || 'Üretim sırasında bir hata oluştu.', 'error');
       } else {
         setGeneratedImage(data.imageUrl);
+        showToast('Görsel başarıyla üretildi! 🎉', 'success');
       }
     } catch (err) {
       console.error(err);
-      alert("Bir bağlantı hatası oluştu.");
+      showToast('Bir bağlantı hatası oluştu. İnternet bağlantınızı kontrol edin.', 'error');
     } finally {
       setIsGenerating(false);
     }
@@ -146,27 +155,41 @@ export default function Home() {
                       </span>
                     </div>
                 </div>
-                {status === 'loading' ? (
-                  <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 sm:px-5 py-2">
-                    <Loader2 size={18} className="animate-spin" />
-                  </div>
-                ) : session ? (
-                  <button 
-                    onClick={() => signOut()}
-                    className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 sm:px-5 py-2 text-sm font-semibold transition-all hover:bg-white/10 hover:border-white/20 active:scale-95"
-                  >
-                    <img src={session.user?.image || ''} alt="" className="w-6 h-6 rounded-full" />
-                    <span className="hidden sm:inline">Çıkış Yap</span>
-                  </button>
-                ) : (
-                  <button 
-                    onClick={() => signIn('google')}
-                    className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 sm:px-5 py-2 text-sm font-semibold transition-all hover:bg-white/10 hover:border-white/20 active:scale-95"
-                  >
-                    <LogIn size={18} />
-                    <span className="hidden sm:inline">Google ile Giriş</span>
-                  </button>
-                )}
+                <div className="flex items-center gap-3">
+                  {/* Studio Linki */}
+                  {session && (
+                    <a 
+                      href="/studio"
+                      className="hidden sm:flex items-center gap-2 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-4 py-2 text-sm font-semibold text-yellow-400 transition-all hover:bg-yellow-400/20 active:scale-95"
+                    >
+                      <Clapperboard size={16} />
+                      <span>Stüdyom</span>
+                    </a>
+                  )}
+                  {status === 'loading' ? (
+                    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 sm:px-5 py-2">
+                      <Loader2 size={18} className="animate-spin" />
+                    </div>
+                  ) : session ? (
+                    <div className="flex items-center gap-2">
+                      <img src={session.user?.image || ''} alt={session.user?.name || ''} className="w-8 h-8 rounded-full ring-2 ring-yellow-400/30" />
+                      <button 
+                        onClick={() => signOut()}
+                        className="hidden sm:flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 sm:px-5 py-2 text-sm font-semibold transition-all hover:bg-white/10 hover:border-white/20 active:scale-95"
+                      >
+                        <span>Çıkış</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={() => signIn('google')}
+                      className="flex items-center gap-2 rounded-full bg-yellow-400 text-black px-4 sm:px-5 py-2 text-sm font-bold transition-all hover:bg-yellow-300 active:scale-95 shadow-[0_0_20px_rgba(250,204,21,0.3)]"
+                    >
+                      <LogIn size={18} />
+                      <span className="hidden sm:inline">Google ile Giriş</span>
+                    </button>
+                  )}
+                </div>
             </div>
         </div>
       </nav>
@@ -233,6 +256,33 @@ export default function Home() {
 
       {/* Main Stream */}
       <main className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+        {/* Hata Durumu */}
+        {fetchError && prompts.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="text-6xl mb-4">⚠️</div>
+            <h3 className="text-xl font-bold text-white mb-2">Veriler yüklenemedi</h3>
+            <p className="text-neutral-400 mb-6">Sunucu bağlantısında bir sorun oluştu.</p>
+            <button 
+              onClick={() => { setPage(1); setHasMore(true); setFetchError(false); }}
+              className="px-6 py-3 rounded-xl bg-yellow-400 text-black font-bold hover:bg-yellow-300 transition-colors"
+            >
+              Tekrar Dene
+            </button>
+          </div>
+        )}
+
+        {/* İlk Yükleme Skeleton */}
+        {loading && prompts.length === 0 && <SkeletonGrid count={8} />}
+
+        {/* Boş Durum */}
+        {!loading && !fetchError && prompts.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <Sparkles className="text-neutral-600 mb-4" size={64} />
+            <h3 className="text-xl font-bold text-white mb-2">Sonuç bulunamadı</h3>
+            <p className="text-neutral-400">Farklı anahtar kelimeler deneyin.</p>
+          </div>
+        )}
+
         <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4 space-y-6">
           <AnimatePresence>
             {prompts.map((item, index) => (
@@ -243,10 +293,17 @@ export default function Home() {
           </AnimatePresence>
         </div>
 
-        {/* Loading Footer */}
-        {loading && (
+        {/* Loading Footer - Sayfalama */}
+        {loading && prompts.length > 0 && (
           <div className="mt-12 flex justify-center py-8">
             <Loader2 className="animate-spin text-yellow-400" size={40} />
+          </div>
+        )}
+
+        {/* Tüm promptlar yüklendi */}
+        {!hasMore && prompts.length > 0 && (
+          <div className="mt-12 flex justify-center py-8">
+            <p className="text-neutral-600 text-sm font-medium">Tüm promptlar yüklendi ({prompts.length} adet)</p>
           </div>
         )}
       </main>

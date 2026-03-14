@@ -1,16 +1,6 @@
-import sqlite3 from 'sqlite3';
-import { open, Database } from 'sqlite';
-import path from 'path';
-
-let db: Database | null = null;
-
-export async function getDb() {
-  if (db) return db;
-  
-  db = await open({
-    filename: path.join(process.cwd(), 'scx_studio.db'),
-    driver: sqlite3.Database
-  });
-  
-  return db;
-}
+/**
+ * SCX Studio - Veritabanı Yardımcı Modülü
+ * Prisma ORM üzerinden SQLite veritabanına erişim sağlar.
+ * Not: Tüm veritabanı işlemleri için lib/prisma.ts kullanılması önerilir.
+ */
+export { prisma as db } from './prisma';
