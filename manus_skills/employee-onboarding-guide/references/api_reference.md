@@ -1,34 +1,37 @@
-# Reference Documentation for Employee Onboarding Guide
+# SCX Studio Pro - API ve Teknik Referans (2026)
 
-This is a placeholder for detailed reference documentation.
-Replace with actual reference content or delete if not needed.
+Bu belge, yeni bir çalışanın projenin teknik mimarisini ve API yapısını anlaması için hazırlanmıştır.
 
-Example real reference docs from other skills:
-- product-management/references/communication.md - Comprehensive guide for status updates
-- product-management/references/context_building.md - Deep-dive on gathering context
-- bigquery/references/ - API references and query examples
+## 1. Veritabanı Şeması (Prisma)
+Proje, SQLite veritabanı kullanır. Ana tablolar:
+- **User:** Kullanıcı kimlik bilgileri ve Google OAuth verileri.
+- **CharacterDNA:** Karakterin fiziksel özellikleri (yaş, cinsiyet, saç, yüz hatları).
+- **PromptTemplate:** Hazır prompt şablonları ve kategorileri.
+- **GeneratedImage:** Üretilen görsellerin URL'leri ve kullanılan promptlar.
 
-## When Reference Docs Are Useful
+## 2. API Uç Noktaları (Next.js API Routes)
 
-Reference docs are ideal for:
-- Comprehensive API documentation
-- Detailed workflow guides
-- Complex multi-step processes
-- Information too lengthy for main SKILL.md
-- Content that's only needed for specific use cases
+### `GET /api/prompts`
+- **Amacı:** Kategorize edilmiş prompt şablonlarını listeler.
+- **Parametreler:** `category` (opsiyonel).
 
-## Structure Suggestions
+### `POST /api/generate`
+- **Amacı:** Fal.ai (Flux + PuLID) kullanarak görsel üretir.
+- **Girdi:** `userPrompt`, `dnaId`.
+- **Süreç:** `lib/ai-rules.ts` üzerinden prompt zenginleştirilir ve Fal.ai'ye gönderilir.
 
-### API Reference Example
-- Overview
-- Authentication
-- Endpoints with examples
-- Error codes
-- Rate limits
+### `GET /api/auth/[...nextauth]`
+- **Amacı:** Google OAuth 2.0 kimlik doğrulama süreçlerini yönetir.
 
-### Workflow Guide Example
-- Prerequisites
-- Step-by-step instructions
-- Common patterns
-- Troubleshooting
-- Best practices
+## 3. Durum Yönetimi (Zustand)
+`lib/store.ts` dosyası şu global durumları yönetir:
+- `currentUser`: Aktif kullanıcı bilgisi.
+- `activeDNA`: Seçili olan Karakter DNA'sı.
+- `imageGallery`: Üretilen görsellerin listesi.
+
+## 4. Prompt Mühendisliği Akışı
+1. Kullanıcı basit bir prompt girer (örn: "kahve içiyor").
+2. `buildFinalPrompt` fonksiyonu çağrılır.
+3. Karakter DNA'sı promptun başına eklenir.
+4. `GLOBAL_AI_RULES` içindeki teknik detaylar sona eklenir.
+5. Sonuç Fal.ai API'sine iletilir.

@@ -5,7 +5,7 @@ description: Dış yapay zeka servislerinde (Flux, Midjourney, Leonardo vb.) kar
 
 # Dış AI Art Tutarlılığı (External AI Art Consistency)
 
-Bu skill, SCX Studio Pro projesinde kullanılan dış AI modellerinin (özellikle Flux 1.1 Pro ve PuLID) çıktılarını en üst seviyeye çıkarmak ve farklı servisler arasında tutarlılık sağlamak için tasarlanmıştır.
+Bu skill, SCX Studio Pro projesinde kullanılan dış AI modellerinin (özellikle Flux 1.1 Pro ve PuLID) çıktılarını en üst sevieye çıkarmak ve farklı servisler arasında tutarlılık sağlamak için tasarlanmıştır.
 
 ## Temel İlkeler
 
@@ -29,10 +29,17 @@ Flux doğrudan negatif prompt desteklemeyebilir. Bunun yerine "Positive Reinforc
 - "No blur" yerine "Sharp focus, high depth of field" kullanın.
 - "Plastic skin" yerine "Visible skin pores, realistic skin texture, natural imperfections" kullanın.
 
+## Karşılaştırma ve Analiz
+Güncel model karşılaştırmaları için `references/consistency_matrix.md` dosyasını inceleyin. 2026 itibariyle Flux 1.1 Pro + PuLID kombinasyonu yüz tutarlılığında lider konumdadır.
+
+## Prompt Şablonları
+Onaylanmış ve test edilmiş prompt yapıları için `references/prompt_templates.md` dosyasını kullanın.
+
 ## Referanslar
-- `references/consistency_matrix.md`: Farklı modellerin tutarlılık karşılaştırması.
+- `references/consistency_matrix.md`: Farklı modellerin tutarlılık karşılaştırması (2026 Güncel).
 - `references/prompt_templates.md`: Onaylanmış tutarlı prompt şablonları.
 
 ## İpuçları
 - **Seed Sabitleme:** Denemeler yaparken aynı seed numarasını kullanarak sadece prompt değişikliklerinin etkisini gözlemleyin.
 - **Ağırlıklandırma:** Önemli özellikleri (örneğin göz rengi) birden fazla kez farklı kelimelerle vurgulayın.
+- **Karakter Referansı (cref):** Midjourney entegrasyonu planlanıyorsa `--cref` parametresini en az 2 referans görselle kullanın.
