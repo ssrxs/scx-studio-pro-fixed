@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     const { characterId, missingTypes } = await request.json(); // e.g., ['body', '360']
 
-    const character = await prisma.characterDNA.findUnique({
+    const character = await prisma.characterDNA.findFirst({
       where: { id: characterId, userId: session.user.id }
     });
 
@@ -41,10 +41,10 @@ export async function POST(request: Request) {
         if (type === '360') updateData.view360Image = res.url;
         if (type === 'nobg') updateData.noBgImage = res.url;
 
-        await prisma.characterDNA.update({
-          where: { id: characterId },
-          data: updateData
-        });
+    await prisma.characterDNA.update({
+      where: { id: characterId },
+      data: updateData
+    });
 
         results.push({ type, url: res.url });
       }

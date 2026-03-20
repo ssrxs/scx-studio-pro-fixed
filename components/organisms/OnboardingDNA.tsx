@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Upload, Sparkles, CheckCircle2, Loader2, Camera, 
   User, Trash2, ArrowRight, Video, Play, Info,
-  ShieldCheck, AlertCircle, RefreshCcw
+  ShieldCheck, AlertCircle, RefreshCcw, Plus
 } from 'lucide-react';
 import { useToast } from '@/components/atoms/Toast';
 
@@ -27,6 +27,20 @@ export default function OnboardingDNA({ onComplete }: OnboardingDNAProps) {
     faceImages: [] as string[],
     videoUrl: ''
   });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // In a real app, you would upload to S3/Supabase here
+    // For now, we use a mock URL
+    const mockUrl = URL.createObjectURL(file);
+    setFormData(prev => ({
+      ...prev,
+      faceImages: [...prev.faceImages, mockUrl].slice(0, 3)
+    }));
+    showToast('Fotoğraf eklendi.', 'success');
+  };
 
   const handleSave = async () => {
     if (!formData.name || (mode === 'photo' && formData.faceImages.length === 0)) {
@@ -127,17 +141,39 @@ export default function OnboardingDNA({ onComplete }: OnboardingDNAProps) {
                     </p>
                   </div>
                   <label className="w-full h-48 rounded-[2rem] border-2 border-dashed border-white/10 bg-white/5 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-white/10 transition-all">
-                    <Video className="text-white/20" size={48} />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Videoyu Yükle</span>
-                    <input type="file" className="hidden" accept="video/*" />
+                    {formData.videoUrl ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <CheckCircle2 className="text-green-500" size={48} />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-green-500">Video Hazır</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Video className="text-white/20" size={48} />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Videoyu Yükle</span>
+                      </>
+                    )}
+                    <input 
+                      type="file" className="hidden" accept="video/*" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setFormData(prev => ({ ...prev, videoUrl: URL.createObjectURL(file) }));
+                          showToast('Video eklendi.', 'success');
+                        }
+                      }}
+                    />
                   </label>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-4">
-                  {[1,2,3].map(i => (
-                    <label key={i} className="aspect-square rounded-3xl border-2 border-dashed border-white/10 bg-white/5 flex items-center justify-center cursor-pointer hover:border-blue-500/30 transition-all">
-                      <Plus className="text-white/10" size={24} />
-                      <input type="file" className="hidden" accept="image/*" />
+                  {[0, 1, 2].map(i => (
+                    <label key={i} className="aspect-square rounded-3xl border-2 border-dashed border-white/10 bg-white/5 flex items-center justify-center cursor-pointer hover:border-blue-500/30 transition-all relative overflow-hidden">
+                      {formData.faceImages[i] ? (
+                        <img src={formData.faceImages[i]} alt={`DNA ${i}`} className="w-full h-full object-cover" />
+                      ) : (
+                        <Plus className="text-white/10" size={24} />
+                      )}
+                      <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                     </label>
                   ))}
                 </div>

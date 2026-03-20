@@ -85,7 +85,8 @@ export default function StudioPage() {
         }
       }
     } catch (err) {
-      // cleaned
+      console.error("Characters could not be loaded:", err);
+      showToast('Karakterler yüklenemedi.', 'error');
     } finally {
       setLoading(false);
     }
@@ -96,6 +97,8 @@ export default function StudioPage() {
   }, [session]);
 
   const loadCharacter = (char: any) => {
+    const features = char.facialFeatures ? (typeof char.facialFeatures === 'string' ? JSON.parse(char.facialFeatures) : char.facialFeatures) : {};
+    
     setDna({
       ...dna,
       id: char.id,
@@ -103,18 +106,20 @@ export default function StudioPage() {
       age: char.age || '25',
       gender: (char.gender === 'men' ? 'men' : 'women'),
       skinToneID: char.skinTone || 'E',
-      hairTypeID: char.hairTypeID || '1A',
-      hairColorID: char.hairColorID || 'jet_black',
-      hairStyleID: char.hairStyleID || (char.gender === 'men' ? 'fade_undercut' : 'beach_waves'),
-      eyeShape: char.eyeShape || 'almond',
-      eyeColor: char.eyeColor || 'obsidian',
+      hairTypeID: features.hairTypeID || char.hairTypeID || '1A',
+      hairColorID: features.hairColorID || char.hairColorID || 'jet_black',
+      hairStyleID: char.hairStyle || (char.gender === 'men' ? 'fade_undercut' : 'beach_waves'),
+      eyeShape: features.eyeShape || char.eyeShape || 'almond',
+      eyeColor: features.eyeColor || char.eyeColor || 'obsidian',
       teethType: char.teethType || 'natural',
       earLobe: char.earLobe || 'detached',
       bodyType: char.bodyType || 'fit',
       height: char.height || (char.gender === 'men' ? '180' : '168'),
       weight: char.weight || (char.gender === 'men' ? '80' : '60'),
-      noseShape: char.noseShape || 'natural',
-      lipShape: char.lipShape || 'natural',
+      noseShape: features.noseShape || char.noseShape || 'natural',
+      lipShape: features.lipShape || char.lipShape || 'natural',
+      beardDensity: features.beardDensity || 'none',
+      beardLength: features.beardLength || 'clean',
       faceImages: char.faceImages ? (typeof char.faceImages === 'string' ? JSON.parse(char.faceImages) : char.faceImages) : [],
       fullBodyImage: char.poseReference || '',
       view360Image: char.view360Image || '',
@@ -348,6 +353,34 @@ export default function StudioPage() {
                         </select>
                       </div>
                     </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-3"><label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-2">Burun Yapısı</label>
+                        <select value={dna.noseShape} onChange={e => setDna({...dna, noseShape: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-2xl text-[10px] font-bold">
+                          {NOSE_SHAPES.map(s => <option key={s.id} value={s.id}>{s.label.toUpperCase()}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-3"><label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-2">Dudak Yapısı</label>
+                        <select value={dna.lipShape} onChange={e => setDna({...dna, lipShape: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-2xl text-[10px] font-bold">
+                          {LIP_SHAPES.map(s => <option key={s.id} value={s.id}>{s.label.toUpperCase()}</option>)}
+                        </select>
+                      </div>
+                    </div>
+
+                    {dna.gender === 'men' && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-3"><label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-2">Sakal Yoğunluğu</label>
+                          <select value={dna.beardDensity} onChange={e => setDna({...dna, beardDensity: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-2xl text-[10px] font-bold">
+                            {BEARD_DENSITY.map(s => <option key={s.id} value={s.id}>{s.label.toUpperCase()}</option>)}
+                          </select>
+                        </div>
+                        <div className="space-y-3"><label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-2">Sakal Uzunluğu</label>
+                          <select value={dna.beardLength} onChange={e => setDna({...dna, beardLength: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-2xl text-[10px] font-bold">
+                            {BEARD_GROWTH_MM.map(s => <option key={s.id} value={s.id}>{s.label.toUpperCase()}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

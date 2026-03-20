@@ -39,11 +39,30 @@ export async function POST(request: Request) {
     let character;
     if (id) {
       character = await prisma.characterDNA.update({
-        where: { id, userId },
+        where: { id },
         data: {
           name: name || "İsimsiz Karakter",
-          age, gender, skinTone, bodyType, hairStyle, facialFeatures, height,
+          age: String(age), 
+          gender, 
+          skinTone: body.skinToneID || skinTone, 
+          bodyType, 
+          hairStyle: body.hairStyleID || hairStyle, 
+          facialFeatures: JSON.stringify({
+            eyeShape: body.eyeShape,
+            eyeColor: body.eyeColor,
+            noseShape: body.noseShape,
+            lipShape: body.lipShape,
+            beardDensity: body.beardDensity,
+            beardLength: body.beardLength,
+            hairTypeID: body.hairTypeID,
+            hairColorID: body.hairColorID
+          }),
+          height: String(height),
+          weight: String(body.weight),
           faceImages: typeof faceImages === 'string' ? faceImages : JSON.stringify(faceImages),
+          poseReference: body.fullBodyImage,
+          view360Image: body.view360Image,
+          noBgImage: body.noBgImage,
           isMainCharacter: !!isMainCharacter
         }
       });
@@ -52,8 +71,27 @@ export async function POST(request: Request) {
         data: {
           userId,
           name: name || "Yeni Karakter",
-          age, gender, skinTone, bodyType, hairStyle, facialFeatures, height,
+          age: String(age), 
+          gender, 
+          skinTone: body.skinToneID || skinTone, 
+          bodyType, 
+          hairStyle: body.hairStyleID || hairStyle, 
+          facialFeatures: JSON.stringify({
+            eyeShape: body.eyeShape,
+            eyeColor: body.eyeColor,
+            noseShape: body.noseShape,
+            lipShape: body.lipShape,
+            beardDensity: body.beardDensity,
+            beardLength: body.beardLength,
+            hairTypeID: body.hairTypeID,
+            hairColorID: body.hairColorID
+          }),
+          height: String(height),
+          weight: String(body.weight),
           faceImages: typeof faceImages === 'string' ? faceImages : JSON.stringify(faceImages),
+          poseReference: body.fullBodyImage,
+          view360Image: body.view360Image,
+          noBgImage: body.noBgImage,
           isMainCharacter: !!isMainCharacter
         }
       });

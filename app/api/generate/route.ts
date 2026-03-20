@@ -121,7 +121,7 @@ export async function POST(request: Request) {
     }
 
     // â”€â”€â”€ SCX Prompt optimizasyonu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    const optimizedPrompt = buildFinalPrompt(prompt, characterDNA);
+    const optimizedPrompt = buildFinalPrompt(prompt, mixerSettings || {}, characterDNA);
 
     // â”€â”€â”€ Generator zinciri â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const falKey = vaultAgent.getKey('FAL_KEY');
