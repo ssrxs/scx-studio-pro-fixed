@@ -222,3 +222,39 @@ export const TEETH_TYPES = [
   { id: 'hollywood', label: 'Hollywood Smile', desc: 'Ultra beyaz ve simetrik.' },
   { id: 'natural', label: 'Natural Alignment', desc: 'Gerçekçi doku.' }
 ];
+
+// --- PHYSICS VE ADVANCED ANATOMY ---
+export const EYE_DYNAMICS = {
+  rotation: {
+    horiz: "±50 degrees",
+    vert: "±48 degrees"
+  },
+  specular: "tear film moisture",
+  pupil_dilation: "2-8mm"
+};
+
+export const NECK_LAWS = {
+  sternocleidomastoid: "visible tension lines",
+  trapezius: "shoulder muscle definition",
+  proportions: "1/8 of total head height"
+};
+
+export const SKIN_ZONE_PHYSICS = {
+  face: "high sebum, fine pores",
+  neck: "thinner epidermis, visible veins",
+  hands: "age indicator, visible knuckles",
+  decollete: "sun damage susceptibility"
+};
+
+export const FABRIC_PHYSICS = {
+  silk: "drapes smoothly, light refraction",
+  leather: "rigid structure, specular highlights",
+  cotton: "natural wrinkles, matte finish",
+  denim: "structured folds, worn edges"
+};
+
+export const BODY_RATIOS = {
+  whr_ideal: "0.7 waist-to-hip ratio",
+  legs_ratio: "45-50% of total height",
+  head_body: "1:7.5 proportion"
+};

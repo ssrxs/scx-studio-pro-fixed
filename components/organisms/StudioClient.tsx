@@ -18,6 +18,7 @@ export default function StudioClient({ user, initialCharacters, recentImages }: 
   const [activeChar, setActiveChar] = useState(initialCharacters.find(c => c.isMainCharacter) || initialCharacters[0]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompt, setPrompt] = useState('');
+  const [useMyFace, setUseMyFace] = useState(true);
   
   if (characters.length === 0) {
     return <OnboardingDNA onComplete={(newChar) => { setCharacters([newChar]); setActiveChar(newChar); }} />;
@@ -33,12 +34,16 @@ export default function StudioClient({ user, initialCharacters, recentImages }: 
         body: JSON.stringify({
           prompt,
           characterId: activeChar.id,
+          useMyFace,
+          mixerSettings: {},
           quality: 'high'
         })
       });
       const data = await res.json();
       if (data.imageUrl) {
         showToast('Görsel üretildi!', 'success');
+      } else if (data.error) {
+        showToast(data.error, 'error');
       }
     } catch (e) {
       showToast('Hata oluştu.', 'error');
@@ -126,6 +131,18 @@ export default function StudioClient({ user, initialCharacters, recentImages }: 
                   placeholder="Örn: Yağmurlu bir Tokyo gecesinde neon ışıklar altında, deri ceketli bir portre..."
                   className="relative w-full h-48 bg-black/60 border border-white/10 rounded-[2rem] p-8 text-lg font-medium text-white placeholder:text-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all backdrop-blur-xl resize-none"
                 />
+              </div>
+
+              <div className="flex items-center gap-4 mb-6">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={useMyFace} 
+                    onChange={(e) => setUseMyFace(e.target.checked)}
+                    className="w-5 h-5 rounded border border-white/20 bg-black/40 cursor-pointer accent-blue-500"
+                  />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/60">Karakterimi Kullan</span>
+                </label>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
