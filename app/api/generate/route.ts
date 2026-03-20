@@ -3,26 +3,29 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/core/prisma';
 import { buildFinalPrompt } from '@/lib/utils/ai-rules';
 import { vaultAgent } from '@/lib/shared/scx-vault';
+import type { GenerationRequest, GenerationResponse, MixerSettings } from '@/types/project';
 
 /**
  * SCX SMART GENERATOR
- * Üretim zinciri: FAL.AI (Yüz enjeksiyonlu) â†’ Together.ai (ücretsiz FLUX) â†’ Pollinations.ai (ücretsiz, key yok)
+ * Üretim zinciri: FAL.AI (Yüz enjeksiyonlu) → Together.ai (ücretsiz FLUX) → Pollinations.ai (ücretsiz, key yok)
  */
 
-// â”€â”€â”€ Pollinations.ai â€” Tamamen ücretsiz, key gerekmez â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Pollinations.ai – Tamamen ücretsiz, key gerekmez ───────────────────────
 async function generateWithPollinations(prompt: string): Promise<string> {
   const encoded = encodeURIComponent(prompt);
   const seed = Math.floor(Math.random() * 999999);
-  // Pollinations URL'si kalıcı â€” direkt Görsel URL olarak kullanılabilir
   const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&seed=${seed}&model=flux&nologo=true&enhance=false`;
 
-  // URL erişilebilirliğini test et (timeout 60s â€” flux biraz yavaş olabilir)
-  const resp = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(60_000) });
+  const resp = await fetch(url, { 
+    method: 'HEAD', 
+    signal: AbortSignal.timeout(60_000) 
+  });
+  
   if (!resp.ok) throw new Error(`Pollinations HTTP ${resp.status}`);
-  return url; // Görsel URL'si doğrudan döndürülür
+  return url;
 }
 
-// â”€â”€â”€ Together.ai â€” Ücretsiz FLUX.1-schnell-Free â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Together.ai – Ücretsiz FLUX.1-schnell-Free ───────────────────────────
 async function generateWithTogether(prompt: string, apiKey: string): Promise<string> {
   const resp = await fetch('https://api.together.xyz/v1/images/generations', {
     method: 'POST',
@@ -52,7 +55,7 @@ async function generateWithTogether(prompt: string, apiKey: string): Promise<str
   return imgUrl;
 }
 
-// â”€â”€â”€ Fal.ai â€” FAL_KEY ile, Yüz enjeksiyonlu FLUX PuLID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Fal.ai – FAL_KEY ile, Yüz enjeksiyonlu FLUX PuLID ──────────────────
 async function generateWithFal(
   prompt: string,
   falKey: string,
@@ -60,7 +63,10 @@ async function generateWithFal(
 ): Promise<string> {
   const resp = await fetch('https://queue.fal.run/fal-ai/flux-pulid', {
     method: 'POST',
-    headers: { Authorization: `Key ${falKey}`, 'Content-Type': 'application/json' },
+    headers: { 
+      Authorization: `Key ${falKey}`, 
+      'Content-Type': 'application/json' 
+    },
     body: JSON.stringify({
       prompt,
       reference_images: referenceImages,
@@ -83,17 +89,22 @@ async function generateWithFal(
   return url;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse<GenerationResponse>> {
   try {
     const session = await auth();
     const userId = session?.user?.id || 'guest-user';
 
-    const body = await request.json();
+    const body = await request.json() as GenerationRequest;
     const { prompt, useMyFace, tempFaceImage, mixerSettings, characterId } = body;
 
-    if (!prompt) return NextResponse.json({ error: 'Prompt boş olamaz.' }, { status: 400 });
+    if (!prompt) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Prompt boş olamaz.' 
+      }, { status: 400 });
+    }
 
-    // â”€â”€â”€ Karakter / referans Görseller â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Karakter / referans Görseller ──────────────────────────────────────
     let referenceImages: { image_url: string }[] = [];
     let characterDNA: any = null;
 
@@ -102,8 +113,13 @@ export async function POST(request: Request) {
         referenceImages = [{ image_url: tempFaceImage }];
       } else {
         const character = await prisma.characterDNA.findFirst({
-          where: { userId, id: characterId || undefined, isMainCharacter: characterId ? undefined : true },
+          where: { 
+            userId, 
+            id: characterId || undefined, 
+            isMainCharacter: characterId ? undefined : true 
+          },
         });
+        
         if (character) {
           characterDNA = character;
           try {
@@ -112,54 +128,78 @@ export async function POST(request: Request) {
               : character.faceImages;
             const images = Array.isArray(parsed) ? parsed : [parsed];
             referenceImages = images.filter(Boolean).map((url: string) => ({ image_url: url }));
-          } catch {
-            if (character.faceImages) referenceImages = [{ image_url: character.faceImages as string }];
+          } catch (e) {
+            if (character.faceImages) {
+              referenceImages = [{ image_url: character.faceImages as string }];
+            }
           }
-          if (character.poseReference) referenceImages.push({ image_url: character.poseReference as string });
+          if (character.poseReference) {
+            referenceImages.push({ image_url: character.poseReference as string });
+          }
         }
       }
     }
 
-    // â”€â”€â”€ SCX Prompt optimizasyonu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    const optimizedPrompt = buildFinalPrompt(prompt, mixerSettings || {}, characterDNA);
+    // ─── SCX Prompt optimizasyonu ──────────────────────────────────────────
+    const optimizedPrompt = buildFinalPrompt(
+      prompt, 
+      (mixerSettings as MixerSettings) || {}, 
+      characterDNA
+    );
 
-    // â”€â”€â”€ Generator zinciri â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Generator zinciri ────────────────────────────────────────────────
     const falKey = vaultAgent.getKey('FAL_KEY');
     const togetherKey = process.env.TOGETHER_API_KEY;
 
     let imageUrl = '';
     let engineUsed = '';
 
-    if (falKey && referenceImages.length > 0) {
-      // Yüz enjeksiyonlu â€” en kaliteli
-      imageUrl = await generateWithFal(optimizedPrompt, falKey, referenceImages);
-      engineUsed = 'fal_ai_flux_pulid';
-    } else if (falKey) {
-      // FAL_KEY var ama referans yok â€” sade FLUX
-      imageUrl = await generateWithFal(optimizedPrompt, falKey, []);
-      engineUsed = 'fal_ai_flux';
-    } else if (togetherKey) {
-      // Ücretsiz Together.ai FLUX
-      imageUrl = await generateWithTogether(optimizedPrompt, togetherKey);
-      engineUsed = 'together_flux_free';
-    } else {
-      // Tamamen ücretsiz Pollinations.ai
-      imageUrl = await generateWithPollinations(optimizedPrompt);
-      engineUsed = 'pollinations_flux_free';
+    try {
+      if (falKey && referenceImages.length > 0) {
+        // Yüz enjeksiyonlu – en kaliteli
+        imageUrl = await generateWithFal(optimizedPrompt, falKey, referenceImages);
+        engineUsed = 'fal_ai_flux_pulid';
+      } else if (falKey) {
+        // FAL_KEY var ama referans yok – sade FLUX
+        imageUrl = await generateWithFal(optimizedPrompt, falKey, []);
+        engineUsed = 'fal_ai_flux';
+      } else if (togetherKey) {
+        // Ücretsiz Together.ai FLUX
+        imageUrl = await generateWithTogether(optimizedPrompt, togetherKey);
+        engineUsed = 'together_flux_free';
+      } else {
+        // Tamamen ücretsiz Pollinations.ai
+        imageUrl = await generateWithPollinations(optimizedPrompt);
+        engineUsed = 'pollinations_flux_free';
+      }
+    } catch (generationError) {
+      console.error('Generation error:', generationError);
+      // Fallback to Pollinations
+      try {
+        imageUrl = await generateWithPollinations(optimizedPrompt);
+        engineUsed = 'pollinations_flux_free_fallback';
+      } catch (fallbackError) {
+        throw new Error(`All generation methods failed: ${generationError}`);
+      }
     }
 
-    // â”€â”€â”€ Veritabanına kaydet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Veritabanına kaydet ──────────────────────────────────────────────
     let savedImage: any = null;
     if (session?.user) {
-      savedImage = await prisma.generatedImage.create({
-        data: {
-          userId,
-          promptUsed: prompt,
-          imageUrl,
-          engineUsed,
-          mixerSettings: JSON.stringify(mixerSettings || {}),
-        },
-      }).catch((e) => { console.error('DB save error:', e); return null; });
+      try {
+        savedImage = await prisma.generatedImage.create({
+          data: {
+            userId,
+            promptUsed: prompt,
+            imageUrl,
+            engineUsed,
+            mixerSettings: JSON.stringify(mixerSettings || {}),
+          },
+        });
+      } catch (dbError) {
+        console.error('DB save error:', dbError);
+        // Don't fail the request if DB save fails
+      }
     }
 
     return NextResponse.json({
@@ -168,11 +208,13 @@ export async function POST(request: Request) {
       id: savedImage?.id || null,
       engine: engineUsed,
       hasFaceInjection: engineUsed === 'fal_ai_flux_pulid',
-    });
+    } as GenerationResponse);
 
   } catch (error: any) {
     console.error('Generate Error:', error);
-    return NextResponse.json({ error: error.message || 'Görsel üretilemedi.' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message || 'Görsel üretilemedi.' 
+    }, { status: 500 });
   }
 }
-
