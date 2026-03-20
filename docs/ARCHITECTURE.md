@@ -1,7 +1,7 @@
 # Synth Control X (SCX) Mimari Dokümanı
 
-## 1. Genel Bakış
-SCX, kullanıcıların kendi yüz referanslarını kullanarak yüksek kaliteli AI görselleri üretmelerini sağlayan modern bir "Personal AI Studio" platformudur.
+## 1. Genel BaKış
+SCX, Kullanıcıların kendi Yüz referanslarını kullanarak yüksek kaliteli AI Görselleri üretmelerini sağlayan modern bir "Personal AI Studio" platformudur.
 
 ## 2. Teknoloji Yığını (Tech Stack)
 - **Framework:** Next.js 15 (App Router)
@@ -27,9 +27,10 @@ SCX, kullanıcıların kendi yüz referanslarını kullanarak yüksek kaliteli A
 - **Middleware:** `/studio` ve API uç noktaları NextAuth middleware ile korunur.
 - **Environment Variables:** Tüm hassas veriler `.env` dosyasında saklanır.
 
-## 4. Veri Akışı
+## 4. Veri AKışı
 1. Kullanıcı Google ile giriş yapar.
-2. `/studio` üzerinden referans yüz fotoğrafını yükler.
+2. `/studio` üzerinden referans Yüz fotoğrafını yükler.
 3. Galeriden bir stil beğenir ve Mikser'i açar.
 4. Mikser üzerinden saç, kıyafet vb. ayarları değiştirir (Zustand).
-5. "Üret" dediğinde `/api/generate` (Planlanan) üzerinden en uygun AI motoru seçilir ve görsel üretilir.
+5. "Üret" dediğinde `/api/generate` (Planlanan) üzerinden en uygun AI motoru seçilir ve Görsel üretilir.
+

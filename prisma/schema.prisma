@@ -41,10 +41,17 @@ model User {
   email           String?          @unique
   emailVerified   DateTime?
   image           String?
+  isAdult         Boolean          @default(false)
+  role            String           @default("USER") // USER, ADMIN
+  gender          String?          // male, female, other
   accounts        Account[]
   sessions        Session[]
   characters      CharacterDNA[]
   generatedImages GeneratedImage[]
+  favoritePrompts FavoritePrompt[]
+  outfits         UserOutfit[]
+  feedbacks       Feedback[]
+  albums          Album[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 }
@@ -69,11 +76,17 @@ model CharacterDNA {
   gender          String?  @default("unspecified")
   skinTone        String?
   bodyType        String?
+  height          String?
+  weight          String?
   hairStyle       String?
   facialFeatures  String?
   faceImages      String?
   poseReference   String?
+  view360Image    String?
+  noBgImage       String?
   signatureOutfit String?
+  expressions     String?  // JSON string for saved expressions
+  storedOutfits   String?  // JSON string for saved outfits
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -88,6 +101,8 @@ model GeneratedImage {
   imageUrl      String
   engineUsed    String   @default("fal_ai_flux_pulid")
   mixerSettings String?
+  albumId       String?
+  album         Album?   @relation(fields: [albumId], references: [id])
   isFavorite    Boolean  @default(false)
   tags          String?
   createdAt     DateTime @default(now())
@@ -96,7 +111,7 @@ model GeneratedImage {
 }
 
 model PromptTemplate {
-  id             Int      @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   collection     String
   originalPrompt String
   template       String
@@ -104,9 +119,67 @@ model PromptTemplate {
   explanation    String?
   imageUrl       String?
   localPath      String?
-  isRefined      Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isRefined      Boolean          @default(false)
+  isNSFW         Boolean          @default(false)
+  favoritedBy    FavoritePrompt[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@index([collection])
+}
+
+// ─── Gelişmiş Profil & Admin Modelleri ──────────────────────────────────────────
+
+model FavoritePrompt {
+  id        String         @id @default(cuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  promptId  Int
+  prompt    PromptTemplate @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now())
+
+  @@unique([userId, promptId])
+  @@index([userId])
+}
+
+model UserOutfit {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  outfitData  String   // JSON formatında giysi kombinasyonu
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // SUGGESTION, BUG, COMPLAINT
+  subject   String
+  message   String
+  status    String   @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Album {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  images      GeneratedImage[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([userId])
 }

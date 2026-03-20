@@ -1,20 +1,20 @@
-# SCX Studio Pro — Synth Control X
+# SCX Studio Pro â€” Synth Control X
 
-> Kendi yüzünüzü kullanarak profesyonel yapay zeka fotoğrafları üretin.
+> Kendi Yüzünüzü kullanarak profesyonel yapay zeka fotoğrafları üretin.
 
-## 🚀 Özellikler
+## ğŸš€ Özellikler
 
-- **Prompt Kütüphanesi** — 8+ kategoride özenle seçilmiş şablonlanmış promptlar
-- **Prompt Mikseri** — Şablonları kişiselleştirmek için görsel kontrol paneli
-- **Studio Pro Kartları** — Gelişmiş şablonlar ve açıklamalar
-- **Görsel Üretimi** — Fal.ai FLUX PuLID entegrasyonu (FAL_KEY gerekli)
-- **Karakter DNA** — Yüzünüzü bir kez tanıtın, tüm promptlarda kullanın
-- **Image Editor** — Diyafram mekanizmalı gelişmiş görsel düzenleme
-- **SCX Vault** — Aksesuar ve kıyafet koleksiyonu
-- **Google OAuth** — Güvenli kimlik doğrulama
-- **PWA Desteği** — Mobil uygulama gibi kurulabilir
+- **Prompt Kütüphanesi** â€” 8+ kategoride özenle seçilmiş şablonlanmış promptlar
+- **Prompt Mikseri** â€” Şablonları kişiselleştirmek için Görsel kontrol paneli
+- **Studio Pro Kartları** â€” Gelişmiş şablonlar ve açıklamalar
+- **Görsel Üretimi** â€” Fal.ai FLUX PuLID entegrasyonu (FAL_KEY gerekli)
+- **Karakter DNA** â€” Yüzünüzü bir kez tanıtın, tüm promptlarda kullanın
+- **Image Editor** â€” Diyafram mekanizmalı gelişmiş Görsel Düzenleme
+- **SCX Vault** â€” Aksesuar ve kıyafet koleksiyonu
+- **Google OAuth** â€” Güvenli kimlik doğrulama
+- **PWA Desteği** â€” Mobil uygulama gibi kurulabilir
 
-## 🛠️ Kurulum
+## ğŸ› ï¸ Kurulum
 
 ### Gereksinimler
 - Node.js 18+
@@ -32,7 +32,7 @@ pnpm install
 
 # .env dosyasını oluştur
 cp .env.example .env
-# .env dosyasını düzenle ve gerekli değerleri gir
+# .env dosyasını Düzenle ve gerekli değerleri gir
 
 # Veritabanını oluştur
 pnpm db:push
@@ -46,59 +46,59 @@ pnpm dev
 
 Uygulama `http://localhost:3000` adresinde çalışacak.
 
-## ⚙️ Ortam Değişkenleri
+## âš™ï¸ Ortam Değişkenleri
 
 `.env.example` dosyasını kopyalayıp gerekli değerleri doldurun:
 
 | Değişken | Açıklama | Zorunlu |
 |---|---|---|
-| `DATABASE_URL` | SQLite DB yolu | ✅ |
-| `AUTH_SECRET` | NextAuth gizli anahtarı | ✅ |
-| `AUTH_GOOGLE_ID` | Google OAuth Client ID | ✅ |
-| `AUTH_GOOGLE_SECRET` | Google OAuth Client Secret | ✅ |
-| `FAL_KEY` | Fal.ai API anahtarı (görsel üretimi için) | ⚠️ |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase URL (dosya yükleme için) | ⚠️ |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Anon Key | ⚠️ |
+| `DATABASE_URL` | SQLite DB yolu | âœ… |
+| `AUTH_SECRET` | NextAuth gizli anahtarı | âœ… |
+| `AUTH_GOOGLE_ID` | Google OAuth Client ID | âœ… |
+| `AUTH_GOOGLE_SECRET` | Google OAuth Client Secret | âœ… |
+| `FAL_KEY` | Fal.ai API anahtarı (Görsel üretimi için) | âš ï¸ |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase URL (dosya yükleme için) | âš ï¸ |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Anon Key | âš ï¸ |
 
-## 📁 Proje Yapısı
+## ğŸ“ Proje Yapısı
 
 ```
 scx-studio-pro-fixed/
-├── app/
-│   ├── api/
-│   │   ├── auth/[...nextauth]/  # NextAuth handler
-│   │   ├── generate/            # Görsel üretim API
-│   │   └── prompts/             # Prompt listeleme API
-│   ├── studio/                  # Karakter stüdyosu sayfası
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx                 # Ana sayfa
-├── components/
-│   ├── ImageEditor.tsx          # Gelişmiş görsel editör
-│   ├── LoadingSkeleton.tsx      # Yükleme iskelet bileşeni
-│   ├── PromptCard.tsx           # Prompt kart bileşeni
-│   ├── Providers.tsx            # Session provider
-│   └── Toast.tsx                # Bildirim sistemi
-├── lib/
-│   ├── ai-rules.ts              # AI prompt optimizasyon kuralları
-│   ├── prisma.ts                # Prisma client
-│   ├── scx-vault.ts             # Aksesuar koleksiyonu
-│   └── store.ts                 # Zustand state yönetimi
-├── prisma/
-│   ├── schema.prisma            # Veritabanı şeması
-│   └── seed.ts                  # Örnek veri
-├── public/
-│   ├── logo.jpeg                # Uygulama logosu
-│   └── manifest.json            # PWA manifest
-├── auth.ts                      # NextAuth konfigürasyonu
-├── auth.config.ts               # Edge-uyumlu auth ayarları
-├── middleware.ts                # Route koruma
-├── next.config.js
-├── tailwind.config.js
-└── tsconfig.json
+â”œâ”€â”€ app/
+â”‚   â”œâ”€â”€ api/
+â”‚   â”‚   â”œâ”€â”€ auth/[...nextauth]/  # NextAuth handler
+â”‚   â”‚   â”œâ”€â”€ generate/            # Görsel üretim API
+â”‚   â”‚   â””â”€â”€ prompts/             # Prompt listeleme API
+â”‚   â”œâ”€â”€ studio/                  # Karakter stüdyosu sayfası
+â”‚   â”œâ”€â”€ globals.css
+â”‚   â”œâ”€â”€ layout.tsx
+â”‚   â””â”€â”€ page.tsx                 # Ana sayfa
+â”œâ”€â”€ components/
+â”‚   â”œâ”€â”€ ImageEditor.tsx          # Gelişmiş Görsel editör
+â”‚   â”œâ”€â”€ LoadingSkeleton.tsx      # Yükleme iskelet bileşeni
+â”‚   â”œâ”€â”€ PromptCard.tsx           # Prompt kart bileşeni
+â”‚   â”œâ”€â”€ Providers.tsx            # Session provider
+â”‚   â””â”€â”€ Toast.tsx                # Bildirim sistemi
+â”œâ”€â”€ lib/
+â”‚   â”œâ”€â”€ ai-rules.ts              # AI prompt optimizasyon kuralları
+â”‚   â”œâ”€â”€ prisma.ts                # Prisma client
+â”‚   â”œâ”€â”€ scx-vault.ts             # Aksesuar koleksiyonu
+â”‚   â””â”€â”€ store.ts                 # Zustand state yönetimi
+â”œâ”€â”€ prisma/
+â”‚   â”œâ”€â”€ schema.prisma            # Veritabanı şeması
+â”‚   â””â”€â”€ seed.ts                  # Örnek veri
+â”œâ”€â”€ public/
+â”‚   â”œâ”€â”€ logo.jpeg                # Uygulama logosu
+â”‚   â””â”€â”€ manifest.json            # PWA manifest
+â”œâ”€â”€ auth.ts                      # NextAuth konfigürasyonu
+â”œâ”€â”€ auth.config.ts               # Edge-uyumlu auth ayarları
+â”œâ”€â”€ middleware.ts                # Route koruma
+â”œâ”€â”€ next.config.js
+â”œâ”€â”€ tailwind.config.js
+â””â”€â”€ tsconfig.json
 ```
 
-## 🔧 Geliştirme Komutları
+## ğŸ”§ Geliştirme Komutları
 
 ```bash
 pnpm dev          # Geliştirme sunucusu
@@ -106,10 +106,10 @@ pnpm build        # Production build
 pnpm start        # Production sunucusu
 pnpm db:push      # Veritabanı şemasını güncelle
 pnpm db:seed      # Örnek verileri ekle
-pnpm db:studio    # Prisma Studio (DB görsel arayüzü)
+pnpm db:studio    # Prisma Studio (DB Görsel araYüzü)
 ```
 
-## 🎨 Teknoloji Yığını
+## ğŸ¨ Teknoloji Yığını
 
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS v3 + Framer Motion
@@ -119,10 +119,11 @@ pnpm db:studio    # Prisma Studio (DB görsel arayüzü)
 - **AI**: Fal.ai FLUX PuLID
 - **Storage**: Supabase (opsiyonel)
 
-## 📝 Lisans
+## ğŸ“ Lisans
 
 MIT
 
 ---
 
-**SCX Studio Pro** — Yapay zeka fotoğrafçılığının geleceği.
+**SCX Studio Pro** â€” Yapay zeka fotoğrafçılığının geleceği.
+

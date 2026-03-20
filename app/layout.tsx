@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import { ToastProvider } from "@/components/Toast";
+import { ToastProvider } from "\@/components/atoms/Toast";
+import Navbar from "\@/components/organisms/Navbar";
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
@@ -13,7 +14,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Synth Control X - AI Photo Studio",
-  description: "Kendi yüzünüzü kullanarak profesyonel yapay zeka fotoğrafları üretin.",
+  description: "Kendi Yüzünüzü kullanarak profesyonel yapay zeka fotoğrafları üretin.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -28,10 +29,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
+    <html lang="tr" suppressHydrationWarning>
       <body className="antialiased">
         <Providers>
           <ToastProvider>
+            <Navbar />
             {children}
           </ToastProvider>
         </Providers>
@@ -39,3 +41,6 @@ export default function RootLayout({
     </html>
   );
 }
+
+
+

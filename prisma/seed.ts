@@ -134,7 +134,7 @@ const PROMPT_TEMPLATES = [
 ];
 
 async function main() {
-  console.log('🌱 Seed başlatılıyor...');
+  
   
   // Mevcut şablonları temizle
   await prisma.promptTemplate.deleteMany({});
@@ -144,9 +144,11 @@ async function main() {
     await prisma.promptTemplate.create({ data: template });
   }
   
-  console.log(`✅ ${PROMPT_TEMPLATES.length} prompt şablonu eklendi.`);
+  
 }
 
 main()
   .catch(console.error)
   .finally(() => prisma.$disconnect());
+
+

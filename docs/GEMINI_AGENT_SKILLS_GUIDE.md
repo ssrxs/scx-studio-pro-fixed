@@ -14,16 +14,16 @@ Gemini'nin multimodal ve uzun bağlam yeteneklerinden tam olarak faydalanmak iç
 
 ### 1.2. `gemini-creative-writer` Skill'i
 
--   **Açıklama:** Bu skill, SCX Studio Pro için pazarlama metinleri, blog yazıları, sosyal medya içerikleri ve kullanıcı arayüzü metinleri gibi yaratıcı içerikler üretmek üzere geliştirilecektir. Gemini'nin doğal dil işleme ve yaratıcı yazma yeteneklerini kullanarak, projenin tanıtım materyallerini zenginleştirecektir.
+-   **Açıklama:** Bu skill, SCX Studio Pro için pazarlama metinleri, blog yazıları, sosyal medya içerikleri ve Kullanıcı araYüzü metinleri gibi yaratıcı içerikler üretmek üzere geliştirilecektir. Gemini'nin Doğal dil işleme ve yaratıcı yazma yeteneklerini kullanarak, projenin tanıtım materyallerini zenginleştirecektir.
 -   **Kullanım Alanları:** Ürün açıklamaları, reklam metinleri, blog gönderileri, e-posta kampanyaları, UI/UX metinleri.
 -   **Beklenen Çıktı:** Belirli bir konsept veya anahtar kelime setine dayalı yaratıcı metinler, farklı tonlarda (resmi, samimi, ikna edici) içerik varyasyonları.
 
 ### 1.3. `gemini-visual-interpreter` Skill'i
 
--   **Açıklama:** Bu skill, SCX Studio Pro tarafından üretilen görselleri analiz etmek ve kalite kontrol süreçlerine yardımcı olmak için tasarlanmıştır. Gemini'nin multimodal yeteneklerini kullanarak, görsellerdeki kompozisyon, renk uyumu, anatomik doğruluk, ışıklandırma tutarlılığı gibi unsurları değerlendirecektir.
--   **Kullanım Alanları:** Üretilen görsellerin otomatik kalite kontrolü, görsel iyileştirme önerileri, belirli bir stil veya tema ile uyumluluk analizi.
+-   **Açıklama:** Bu skill, SCX Studio Pro tarafından üretilen Görselleri analiz etmek ve kalite kontrol süreçlerine yardımcı olmak için tasarlanmıştır. Gemini'nin multimodal yeteneklerini kullanarak, Görsellerdeki kompozisyon, renk uyumu, anatomik doğruluk, ışıklandırma tutarlılığı gibi unsurları değerlendirecektir.
+-   **Kullanım Alanları:** Üretilen Görsellerin otomatik kalite kontrolü, Görsel iyileştirme önerileri, belirli bir stil veya tema ile uyumluluk analizi.
 -   **Beklenen Çıktı:** Görsel analiz raporları, iyileştirme için spesifik geri bildirimler (örneğin, 
-anatomik hata tespiti, renk dengesizliği uyarısı), görselin belirli bir prompt ile ne kadar uyumlu olduğunu gösteren skorlar.
+anatomik hata tespiti, renk dengesizliği uyarısı), Görselin belirli bir prompt ile ne kadar uyumlu olduğunu gösteren skorlar.
 
 ## 2. MCP Entegrasyon Rehberi
 
@@ -66,9 +66,9 @@ manus-mcp-cli tool call gemini <skill_adı> --input '<JSON_parametreleri>'
 
 ### 2.4. `gemini-visual-interpreter` Örnek Kullanımı
 
--   **Amaç:** Üretilen bir görselin anatomik doğruluğunu kontrol etmek.
+-   **Amaç:** Üretilen bir Görselin anatomik doğruluğunu kontrol etmek.
 -   **Parametreler:**
-    -   `imageUrl`: Analiz edilecek görselin URL adresi.
+    -   `imageUrl`: Analiz edilecek Görselin URL adresi.
     -   `analysisType`: Analiz türü (`anatomical_accuracy`, `color_consistency`, `composition`).
 -   **Örnek Çağrı:**
 
@@ -83,3 +83,4 @@ manus-mcp-cli tool call gemini <skill_adı> --input '<JSON_parametreleri>'
 Bu rehber ve önerilen skill yapıları, SCX Studio Pro GitHub reposunda `docs/GEMINI_AGENT_SKILLS_GUIDE.md` olarak güncellenecektir. Bu, projenin Gemini entegrasyonu için şeffaf ve izlenebilir bir yol haritası sağlayacaktır.
 
 Bu strateji, SCX Studio Pro projesinin Gemini CLI ve diğer AI agent'ları ile sorunsuz bir şekilde çalışmasını sağlayarak, geliştirme sürecini hızlandıracak ve AI yeteneklerini en üst düzeye çıkaracaktır.
+

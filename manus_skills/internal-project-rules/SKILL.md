@@ -27,9 +27,10 @@ Sisteme eklenen her kural şu kriterlere uymalıdır:
 
 ## Referanslar
 - `references/db_schema.md`: Güncel veritabanı tablosu ve ilişkileri.
-- `references/ai_logic_flow.md`: Prompt oluşturma sürecinin mantıksal akış diyagramı.
+- `references/ai_logic_flow.md`: Prompt oluşturma sürecinin mantıksal aKış diyagramı.
 
 ## İpuçları
 - Yeni bir AI sağlayıcısı eklerken `lib/generation.ts` içindeki `GenerationManager` sınıfını genişletin.
 - `components/` dizinindeki bileşenleri atomik yapıda tutmaya özen gösterin.
+
 

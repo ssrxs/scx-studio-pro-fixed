@@ -1,0 +1,8 @@
+{
+    "mcpServers":  {
+                       "Klavis-strata":  {
+                                             "url":  "https://strata.klavis.ai/mcp/?strata_id=3a5269b2-0b08-4d32-8913-59a69f9d4111",
+                                             "type":  "sse"
+                                         }
+                   }
+}

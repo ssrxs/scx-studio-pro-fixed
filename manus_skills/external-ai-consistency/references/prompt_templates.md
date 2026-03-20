@@ -43,3 +43,4 @@ Background: Soft bokeh, blurred studio background.
 - **Doğal Dil Kullanın:** Flux modelleri için virgülle ayrılmış kelimeler yerine tam cümleler kurun.
 - **Negatifleri Pozitife Çevirin:** "No blur" yerine "Sharp focus" kullanın.
 - **Teknik Terimlere Odaklanın:** "Beautiful" yerine "85mm lens, f/1.8" gibi teknik veriler girin.
+
